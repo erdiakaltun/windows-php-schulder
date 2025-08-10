@@ -47,7 +47,7 @@ Görevlerin otomatik çalışması için `cron_runner.php` dosyasını belirli a
 6. Kaydedin.
 
 Örnek komut:
-** C:\bin\php\php8.2.18\php.exe "C:\\schulder\\scripts\\test.php"
+** C:\bin\php\php8.2.18\php.exe "C:\\schulder\\scripts\\test.php" **
 
 
 
@@ -55,6 +55,7 @@ Görevlerin otomatik çalışması için `cron_runner.php` dosyasını belirli a
 - Uygulama **PHP 7.4+** ile uyumludur.
 - `cron_runner.php` dosyası tarayıcıdan çalıştırılabilir, ancak otomasyon için **Görev Zamanlayıcı** kullanılması önerilir.
 - Unix/Linux sistemlerinde `cron` kullanarak aynı mantıkla çalıştırabilirsiniz.
+
 
 
 
