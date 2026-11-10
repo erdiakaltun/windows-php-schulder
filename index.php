@@ -1,5 +1,6 @@
 <?php
 require 'config.php';
+require_admin();
 $tasks = $pdo->query('SELECT * FROM scheduled_tasks')->fetchAll();
 ?>
 <!DOCTYPE html>
