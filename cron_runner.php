@@ -1,4 +1,9 @@
 <?php
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit('Bu betik yalnızca komut satırından çalıştırılabilir.');
+}
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 file_put_contents(__DIR__.'/cron_debug.log', date('Y-m-d H:i:s')." cron_runner.php çalıştı\n", FILE_APPEND);
