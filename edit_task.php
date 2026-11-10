@@ -28,6 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit('Görev bilgileri geçersiz.');
     }
 
+    $scriptPath = resolve_allowed_task_script($scriptPath);
+    if ($scriptPath === false) {
+        http_response_code(400);
+        exit('Yalnızca mevcut PHP dosyaları scripts/ klasöründen seçilebilir.');
+    }
+
     $stmt = $pdo->prepare('UPDATE scheduled_tasks SET name = ?, script_path = ?, interval_type = ?, interval_value = ? WHERE id = ?');
     $stmt->execute([$name, $scriptPath, $intervalType, $intervalValue, $id]);
     header('Location: index.php');
