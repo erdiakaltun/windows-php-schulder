@@ -1,6 +1,6 @@
 <?php
 require 'config.php';
-$tasks = $pdo->query("SELECT * FROM scheduled_tasks")->fetchAll();
+$tasks = $pdo->query('SELECT * FROM scheduled_tasks')->fetchAll();
 ?>
 <!DOCTYPE html>
 <html>
@@ -26,20 +26,20 @@ $tasks = $pdo->query("SELECT * FROM scheduled_tasks")->fetchAll();
         <tbody>
         <?php foreach ($tasks as $task): ?>
             <tr>
-                <td><?=htmlspecialchars($task['name'])?></td>
-                <td><?=htmlspecialchars($task['script_path'])?></td>
+                <td><?= htmlspecialchars($task['name'], ENT_QUOTES, 'UTF-8') ?></td>
+                <td><?= htmlspecialchars($task['script_path'], ENT_QUOTES, 'UTF-8') ?></td>
                 <td>
                     <?php
                     switch ($task['interval_type']) {
-                        case 'minute': echo $task['interval_value'] . " dk'da bir"; break;
-                        case 'hour': echo $task['interval_value'] . " saatte bir"; break;
-                        case 'day': echo $task['interval_value'] . " günde bir"; break;
-                        case 'custom': echo "Günde {$task['interval_value']} defa"; break;
+                        case 'minute': echo (int) $task['interval_value'] . " dk'da bir"; break;
+                        case 'hour': echo (int) $task['interval_value'] . " saatte bir"; break;
+                        case 'day': echo (int) $task['interval_value'] . " günde bir"; break;
+                        case 'custom': echo 'Günde ' . (int) $task['interval_value'] . ' defa'; break;
                     }
                     ?>
                 </td>
-                <td><?=$task['last_run']?></td>
-                <td><?=$task['run_count']?></td>
+                <td><?= htmlspecialchars((string) $task['last_run'], ENT_QUOTES, 'UTF-8') ?></td>
+                <td><?= (int) $task['run_count'] ?></td>
                 <td>
                     <?php if ($task['is_active']): ?>
                         <span class="badge bg-success">Aktif</span>
@@ -47,16 +47,20 @@ $tasks = $pdo->query("SELECT * FROM scheduled_tasks")->fetchAll();
                         <span class="badge bg-secondary">Pasif</span>
                     <?php endif; ?>
                 </td>
-                <td>
-                    <a href="edit_task.php?id=<?=$task['id']?>" class="btn btn-sm btn-primary">Düzenle</a>
-                    <a href="toggle_task.php?id=<?=$task['id']?>" class="btn btn-sm btn-warning">
-                        <?=$task['is_active'] ? 'Durdur' : 'Başlat'?>
-                    </a>
-                    <a href="delete_task.php?id=<?=$task['id']?>" class="btn btn-sm btn-danger" onclick="return confirm('Silinsin mi?')">Sil</a>
+                <td class="d-flex gap-1">
+                    <a href="edit_task.php?id=<?= (int) $task['id'] ?>" class="btn btn-sm btn-primary">Düzenle</a>
+                    <form method="post" action="toggle_task.php">
+                        <input type="hidden" name="id" value="<?= (int) $task['id'] ?>">
+                        <button type="submit" class="btn btn-sm btn-warning"><?= $task['is_active'] ? 'Durdur' : 'Başlat' ?></button>
+                    </form>
+                    <form method="post" action="delete_task.php" onsubmit="return confirm('Silinsin mi?')">
+                        <input type="hidden" name="id" value="<?= (int) $task['id'] ?>">
+                        <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+                    </form>
                 </td>
             </tr>
         <?php endforeach; ?>
         </tbody>
     </table>
 </body>
-</html> 
+</html>
