@@ -14,9 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         http_response_code(400);
         exit('Görev bilgileri geçersiz.');
     }
-    if (!is_file($scriptPath)) {
+    $scriptPath = resolve_allowed_task_script($scriptPath);
+    if ($scriptPath === false) {
         http_response_code(400);
-        exit('Seçilen script dosyası bulunamadı.');
+        exit('Yalnızca mevcut PHP dosyaları scripts/ klasöründen seçilebilir.');
     }
 
     $stmt = $pdo->prepare('INSERT INTO scheduled_tasks (name, script_path, interval_type, interval_value) VALUES (?, ?, ?, ?)');
