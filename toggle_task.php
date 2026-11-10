@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Allow: POST');
     exit('Method not allowed');
 }
+require_valid_csrf_token();
 
 $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
 if ($id === false || $id === null) {
