@@ -10,7 +10,13 @@ $tasks = $pdo->query('SELECT * FROM scheduled_tasks')->fetchAll();
     <link rel="stylesheet" href="assets/bootstrap.min.css">
 </head>
 <body class="container mt-4">
-    <h1>Zamanlanmış Görevler</h1>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Zamanlanmış Görevler</h1>
+        <form method="post" action="logout.php">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+            <button type="submit" class="btn btn-outline-secondary">Çıkış yap</button>
+        </form>
+    </div>
     <a href="add_task.php" class="btn btn-success mb-3">Yeni Görev Ekle</a>
     <table class="table table-bordered">
         <thead>
