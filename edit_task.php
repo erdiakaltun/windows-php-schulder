@@ -16,14 +16,19 @@ if (!$task) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_valid_csrf_token();
+    $name = trim($_POST['name'] ?? '');
+    $scriptPath = trim($_POST['script_path'] ?? '');
+    $intervalType = $_POST['interval_type'] ?? '';
+    $intervalValue = filter_input(INPUT_POST, 'interval_value', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+
+    if ($name === '' || $scriptPath === '' || !in_array($intervalType, ['minute', 'hour', 'day', 'custom'], true) || $intervalValue === false || $intervalValue === null) {
+        http_response_code(400);
+        exit('Görev bilgileri geçersiz.');
+    }
+
     $stmt = $pdo->prepare('UPDATE scheduled_tasks SET name = ?, script_path = ?, interval_type = ?, interval_value = ? WHERE id = ?');
-    $stmt->execute([
-        trim($_POST['name'] ?? ''),
-        trim($_POST['script_path'] ?? ''),
-        $_POST['interval_type'] ?? '',
-        filter_input(INPUT_POST, 'interval_value', FILTER_VALIDATE_INT),
-        $id
-    ]);
+    $stmt->execute([$name, $scriptPath, $intervalType, $intervalValue, $id]);
     header('Location: index.php');
     exit;
 }
@@ -37,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="container mt-4">
     <h1>Görev Düzenle</h1>
     <form method="post">
+        <input type="hidden" name="csrf_token" value="<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>">
         <div class="mb-3">
             <label>Ad</label>
             <input type="text" name="name" class="form-control" value="<?=htmlspecialchars($task['name'], ENT_QUOTES, 'UTF-8')?>" required>
