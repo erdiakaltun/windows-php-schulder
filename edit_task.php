@@ -1,5 +1,6 @@
 <?php
 require 'config.php';
+require_admin();
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
 if ($id === false || $id === null) {
