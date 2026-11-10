@@ -13,15 +13,7 @@ $tasks = $pdo->query('SELECT * FROM scheduled_tasks')->fetchAll();
     <a href="add_task.php" class="btn btn-success mb-3">Yeni Görev Ekle</a>
     <table class="table table-bordered">
         <thead>
-            <tr>
-                <th>Ad</th>
-                <th>Script</th>
-                <th>Aralık</th>
-                <th>Son Çalışma</th>
-                <th>Çalışma Sayısı</th>
-                <th>Durum</th>
-                <th>İşlem</th>
-            </tr>
+            <tr><th>Ad</th><th>Script</th><th>Aralık</th><th>Son Çalışma</th><th>Çalışma Sayısı</th><th>Durum</th><th>İşlem</th></tr>
         </thead>
         <tbody>
         <?php foreach ($tasks as $task): ?>
@@ -40,20 +32,16 @@ $tasks = $pdo->query('SELECT * FROM scheduled_tasks')->fetchAll();
                 </td>
                 <td><?= htmlspecialchars((string) $task['last_run'], ENT_QUOTES, 'UTF-8') ?></td>
                 <td><?= (int) $task['run_count'] ?></td>
-                <td>
-                    <?php if ($task['is_active']): ?>
-                        <span class="badge bg-success">Aktif</span>
-                    <?php else: ?>
-                        <span class="badge bg-secondary">Pasif</span>
-                    <?php endif; ?>
-                </td>
+                <td><?= $task['is_active'] ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-secondary">Pasif</span>' ?></td>
                 <td class="d-flex gap-1">
                     <a href="edit_task.php?id=<?= (int) $task['id'] ?>" class="btn btn-sm btn-primary">Düzenle</a>
                     <form method="post" action="toggle_task.php">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
                         <input type="hidden" name="id" value="<?= (int) $task['id'] ?>">
                         <button type="submit" class="btn btn-sm btn-warning"><?= $task['is_active'] ? 'Durdur' : 'Başlat' ?></button>
                     </form>
                     <form method="post" action="delete_task.php" onsubmit="return confirm('Silinsin mi?')">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
                         <input type="hidden" name="id" value="<?= (int) $task['id'] ?>">
                         <button type="submit" class="btn btn-sm btn-danger">Sil</button>
                     </form>
