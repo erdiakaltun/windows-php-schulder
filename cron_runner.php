@@ -1,4 +1,9 @@
 <?php
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit('Bu betik yalnızca komut satırından çalıştırılabilir.');
+}
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 file_put_contents(__DIR__.'/cron_debug.log', date('Y-m-d H:i:s')." cron_runner.php çalıştı\n", FILE_APPEND);
@@ -36,14 +41,15 @@ foreach ($tasks as $task) {
             // Göreli yol ise proje kökünden başlat
             $script = __DIR__ . '/' . ltrim($script, '/\\');
         }
-        if (file_exists($script)) {
-            $cmd = "C:\\wamp64\\bin\\php\\php8.2.18\\php.exe \"$script\"";
+        $script = resolve_allowed_task_script($script);
+        if ($script !== false) {
+            $cmd = "C:\\wamp64\\bin\\php\\php8.2.18\\php.exe " . escapeshellarg($script);
             $output = shell_exec($cmd . ' 2>&1');
             file_put_contents(__DIR__.'/cron_debug.log', "Komut: $cmd\nÇıktı: $output\n", FILE_APPEND);
             $pdo->prepare("UPDATE scheduled_tasks SET last_run = ?, run_count = run_count + 1 WHERE id = ?")
                 ->execute([$now->format('Y-m-d H:i:s'), $task['id']]);
         } else {
-            file_put_contents(__DIR__.'/cron_debug.log', "Script bulunamadı: $script\n", FILE_APPEND);
+            file_put_contents(__DIR__.'/cron_debug.log', "Script bulunamadı veya scripts/ dışında: \n", FILE_APPEND);
         }
     }
 } 
