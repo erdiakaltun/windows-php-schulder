@@ -1,62 +1,43 @@
-# 🕒 PHP Zamanlanmış Görev Yöneticisi
+# PHP Zamanlanmış Görev Yöneticisi
 
-Bu proje, PHP dili ile yazılmış basit bir **zamanlanmış görev (task scheduler)** uygulamasıdır.  
-Web arayüzü üzerinden görev ekleyebilir, düzenleyebilir, aktif/pasif yapabilir ve silebilirsiniz.  
-Eklenen görevler, **Windows Görev Zamanlayıcı (Task Scheduler)** ile belirli aralıklarla çalıştırılır.
+PHP ve MySQL ile yazılmış, Windows Görev Zamanlayıcı üzerinden PHP betikleri çalıştıran bir görev yöneticisi. Görevleri web arayüzünden yönetebilirsiniz.
 
-## 📂 Proje Yapısı
+## Gereksinimler
 
-assets/ # CSS, JS ve görseller
-scripts/ # test script dosyası
-add_task.php # Yeni görev ekleme
-config.php # Veritabanı bağlantı ayarları
-cron_runner.php # Zamanlanmış görevleri çalıştırır
-db.sql # Veritabanı yapısı
-delete_task.php # Görev silme
-edit_task.php # Görev düzenleme
-index.php # Görev listeleme ve yönetim
-toggle_task.php # Görevi aktif/pasif yapma
-README.md # Proje dökümantasyonu
+- PHP 7.4+
+- MySQL
+- Apache veya başka bir PHP web sunucusu
+- Windows Task Scheduler (çalıştırıcıyı zamanlamak için)
 
+## Kurulum
 
+1. `db.sql` dosyasını MySQL'e aktarın.
+2. `config.php` içindeki veritabanı bağlantı bilgilerini ayarlayın.
+3. Web sunucusunda `SCHULDER_ADMIN_PASSWORD_HASH` ortam değişkenini yapılandırın. Hash üretmek için:
 
-## 🚀 Kurulum
+   ```sh
+   php -r "echo password_hash('GÜÇLÜ_BİR_PAROLA', PASSWORD_DEFAULT), PHP_EOL;"
+   ```
 
-1. **Veritabanını oluşturun**
-   - `db.sql` dosyasını MySQL veritabanınıza import edin.
+   Üretilen değeri ortam değişkenine koyun; parolanın kendisini kaynak koduna eklemeyin. Hash yapılandırılmadan yönetim arayüzü kullanıma açılmaz.
 
-2. **Veritabanı ayarlarını yapın**
-   - `config.php` dosyasındaki veritabanı bilgilerini kendi sunucunuza göre düzenleyin.
+4. Proje dosyalarını web sunucusuna kopyalayın ve `login.php` sayfasını açın.
+5. Yeni görevleri `scripts/` klasöründeki dosyalarla sınırlandırın ve web sunucusunu yalnızca güvendiğiniz kullanıcılara açın.
 
-3. **Proje dosyalarını yükleyin**
-   - Tüm proje dosyalarını web sunucunuza kopyalayın.
+## Zamanlanmış çalıştırma
 
-4. **Çalıştırma**
-   - `index.php` üzerinden görevlerinizi ekleyin ve yönetin.
+`cron_runner.php` yalnızca PHP CLI üzerinden çalışır. Windows Görev Zamanlayıcı'da PHP çalıştırılabilir dosyasını eylem olarak seçin ve argümanlara tam dosya yolunu verin:
 
-## ⏱ Windows Görev Zamanlayıcı Ayarı
+```text
+Program: C:\\bin\\php\\php.exe
+Arguments: C:\\path\\to\\schulder\\cron_runner.php
+```
 
-Görevlerin otomatik çalışması için `cron_runner.php` dosyasını belirli aralıklarla çalıştıracak bir görev ekleyin.
+Örneğin her 5 dakikada bir çalışacak şekilde tetikleyici ekleyebilirsiniz. Bu dosya HTTP isteğiyle çalıştırılamaz.
 
-**Adımlar:**
-1. Windows'ta **Görev Zamanlayıcı** uygulamasını açın.
-2. **Yeni Görev** oluşturun.
-3. **Tetikleyici (Trigger)** ekleyerek çalışma aralığını belirleyin (örn: her 5 dakikada bir).
-4. **Eylem (Action)** olarak `php.exe`'yi seçin.
-5. Argüman olarak `C:\path\to\cron_runner.php` dosya yolunu ekleyin.
-6. Kaydedin.
+## Güvenlik
 
-Örnek komut:
-**C:\bin\php\php8.2.18\php.exe "C:\\schulder\\scripts\\test.php"**
-
-
-
-## 📌 Notlar
-- Uygulama **PHP 7.4+** ile uyumludur.
-- `cron_runner.php` dosyası tarayıcıdan çalıştırılabilir, ancak otomasyon için **Görev Zamanlayıcı** kullanılması önerilir.
-- Unix/Linux sistemlerinde `cron` kullanarak aynı mantıkla çalıştırabilirsiniz.
-
-
-
-
-
+- Yönetim oturumu `SCHULDER_ADMIN_PASSWORD_HASH` ile korunur.
+- Görev ekleme, güncelleme, etkinleştirme ve silme formları CSRF token kullanır.
+- Görev çalıştırıcıyı web sunucusundan açmayın; Windows Görev Zamanlayıcı ile CLI kullanın.
+- Uygulama kod çalıştırabildiğinden, web arayüzüne erişimi sınırlandırın.
