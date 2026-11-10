@@ -1,5 +1,6 @@
 <?php
 require 'config.php';
+require_admin();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_valid_csrf_token();
